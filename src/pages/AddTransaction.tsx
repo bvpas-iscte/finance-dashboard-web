@@ -2,13 +2,17 @@ import { useState } from 'react';
 import { useFinanceStore } from '../store/useFinanceStore';
 
 const CATEGORIES = [
-  'food','transport','entertainment',
-  'utilities','shopping','other'
+  'food',
+  'transport',
+  'entertainment',
+  'utilities',
+  'shopping',
+  'other',
 ];
 
 export default function AddTransaction() {
   const [amount, setAmount] = useState('');
-  const [type, setType] = useState('expense');
+  const [type, setType] = useState<'income' | 'expense'>('expense');
   const [category, setCategory] = useState('food');
 
   const addTransaction = useFinanceStore((s) => s.addTransaction);
@@ -28,7 +32,6 @@ export default function AddTransaction() {
 
   return (
     <div className="card-elevated p-5 space-y-5">
-
       <h2 className="text-lg font-semibold">New transaction</h2>
 
       <input
@@ -40,10 +43,12 @@ export default function AddTransaction() {
       />
 
       <div className="flex gap-2">
-        {['expense','income'].map((t) => (
+        {['expense', 'income'].map((t) => (
           <button
             key={t}
-            onClick={() => setType(t)}
+            onClick={() =>
+              setType(t as 'income' | 'expense')
+            }
             className={`px-4 py-2 rounded-xl ${
               type === t
                 ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white'
@@ -77,7 +82,6 @@ export default function AddTransaction() {
       >
         Add transaction
       </button>
-
     </div>
   );
 }
