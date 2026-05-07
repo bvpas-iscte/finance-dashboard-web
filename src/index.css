@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  * {
+    font-family: 'Inter', sans-serif;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  body {
+    @apply transition-colors duration-300;
+  }
+
+  [data-theme='dark'] body {
+    @apply bg-gradient-to-br from-purple-800 via-black to-purple-900 text-white;
+  }
+
+  [data-theme='light'] body {
+    @apply bg-gradient-to-br from-purple-600 via-white to-purple-800 text-gray-900;
+  }
+}
+
+/* ===== CARDS ===== */
+.card {
+  @apply bg-black border border-white/10 rounded-2xl backdrop-blur-xl;
+}
+
+.card-elevated {
+  @apply bg-black border border-white/10 rounded-3xl backdrop-blur-xl;
+}
+
+/* ===== INPUTS ===== */
+input {
+  @apply bg-white/5 border border-white/10 text-white placeholder-white/80 rounded-xl px-3 py-2 outline-none;
+}
+
+input:focus {
+  @apply ring-2 ring-purple-500/40 border-purple-500;
+}
+
+/* ===== BUTTON BASE ===== */
+button {
+  @apply transition-all duration-200;
+}
+
+button:active {
+  @apply scale-95;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/20 rounded-full;
+}
+
+/* ===== THEME VARIANTS ===== */
+[data-theme='dark'] .card {
+  @apply bg-black border border-white/10 rounded-2xl backdrop-blur-xl;
+}
+
+[data-theme='dark'] .card-elevated {
+  @apply bg-black border border-white/10 rounded-3xl backdrop-blur-xl;
+}
+
+[data-theme='dark'] input {
+  @apply bg-white/5 border border-white/10 text-white placeholder-white/80 rounded-xl px-3 py-2 outline-none;
+}
+
+[data-theme='dark'] input:focus {
+  @apply ring-2 ring-purple-500/40 border-purple-500;
+}
+
+[data-theme='light'] .card {
+  @apply text-white;
+}
+
+[data-theme='light'] .card-elevated {
+  @apply text-white;
+}
