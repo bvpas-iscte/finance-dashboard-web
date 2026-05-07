@@ -15,43 +15,86 @@
   }
 
   body {
-    @apply transition-colors duration-300;
+    transition: background-color 0.3s, color 0.3s;
   }
 
   [data-theme='dark'] body {
-    @apply bg-gradient-to-br from-purple-800 via-black to-purple-900 text-white;
+    background-image: linear-gradient(to bottom right, #6b21a8, #000000, #581c87);
+    color: white;
   }
 
   [data-theme='light'] body {
-    @apply bg-gradient-to-br from-purple-600 via-white to-purple-800 text-gray-900;
+    background-image: linear-gradient(to bottom right, #9333ea, #ffffff, #7e22ce);
+    color: #ffffff;
   }
 }
 
 /* ===== CARDS ===== */
 .card {
-  @apply bg-black border border-white/10 rounded-2xl backdrop-blur-xl;
+  background-color: black;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(24px);
+  color: white;
 }
 
 .card-elevated {
-  @apply bg-black border border-white/10 rounded-3xl backdrop-blur-xl;
+  background-color: black;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  backdrop-filter: blur(24px);
+  color: white;
 }
 
-/* ===== INPUTS ===== */
+/* ===== INPUTS ALWAYS WHITE INSIDE CARDS ===== */
+.card input,
+.card-elevated input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  width: 100%;
+}
+
+.card input::placeholder,
+.card-elevated input::placeholder {
+  color: rgb(255, 255, 255);
+}
+
+.card input:focus,
+.card-elevated input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.4);
+}
+
+/* ===== INPUTS (base, outside cards) ===== */
 input {
-  @apply bg-white/5 border border-white/10 text-white placeholder-white/80 rounded-xl px-3 py-2 outline-none;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+}
+
+input::placeholder {
+  color: rgb(255, 255, 255);
 }
 
 input:focus {
-  @apply ring-2 ring-purple-500/40 border-purple-500;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.4);
 }
 
 /* ===== BUTTON BASE ===== */
 button {
-  @apply transition-all duration-200;
+  transition: all 0.2s;
 }
 
 button:active {
-  @apply scale-95;
+  transform: scale(0.95);
 }
 
 /* ===== SCROLLBAR ===== */
@@ -60,30 +103,6 @@ button:active {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/20 rounded-full;
-}
-
-/* ===== THEME VARIANTS ===== */
-[data-theme='dark'] .card {
-  @apply bg-black border border-white/10 rounded-2xl backdrop-blur-xl;
-}
-
-[data-theme='dark'] .card-elevated {
-  @apply bg-black border border-white/10 rounded-3xl backdrop-blur-xl;
-}
-
-[data-theme='dark'] input {
-  @apply bg-white/5 border border-white/10 text-white placeholder-white/80 rounded-xl px-3 py-2 outline-none;
-}
-
-[data-theme='dark'] input:focus {
-  @apply ring-2 ring-purple-500/40 border-purple-500;
-}
-
-[data-theme='light'] .card {
-  @apply text-white;
-}
-
-[data-theme='light'] .card-elevated {
-  @apply text-white;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
 }
