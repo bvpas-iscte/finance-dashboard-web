@@ -5,12 +5,15 @@ type Transaction = {
   amount: number;
   type: 'income' | 'expense';
   category?: string;
+  description?: string;
   goalId?: number;
-  date?: Date;
+  date?: string | Date;
 };
 
 type SavingsGoal = {
   id: number;
+  name: string;
+  target: number;
   amount: number;
   monthlyContribution?: number;
 };
