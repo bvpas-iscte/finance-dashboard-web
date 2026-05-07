@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type Transaction = {
+export type Transaction = {
   id: number;
   amount: number;
   type: 'income' | 'expense';
@@ -10,7 +10,7 @@ type Transaction = {
   date?: string | Date;
 };
 
-type SavingsGoal = {
+export type SavingsGoal = {
   id: number;
   name: string;
   target: number;
@@ -18,7 +18,7 @@ type SavingsGoal = {
   monthlyContribution?: number;
 };
 
-type FinanceState = {
+export type FinanceState = {
   transactions: Transaction[];
   savings: SavingsGoal[];
   goal: number;
