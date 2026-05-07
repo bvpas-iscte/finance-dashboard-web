@@ -1,10 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useFinanceStore } from '../store/useFinanceStore';
-import {
-  LineChart,
-  Line,
-  ResponsiveContainer,
-} from 'recharts';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import type { SavingsGoal } from '../store/useFinanceStore';
 
 const CATEGORIES = [
   'food',
@@ -16,62 +13,42 @@ const CATEGORIES = [
 ];
 
 export default function Dashboard() {
-  const transactions = useFinanceStore(
-    (s) => s.transactions
-  );
+  const transactions = useFinanceStore((s) => s.transactions);
+  const balance = useFinanceStore((s) => s.getBalance());
+  const savings = useFinanceStore((s) => s.savings) || [];
 
-  const balance = useFinanceStore((s) =>
-    s.getBalance()
-  );
+  const addTransaction = useFinanceStore((s) => s.addTransaction);
+  const deleteTransaction = useFinanceStore((s) => s.deleteTransaction);
 
-  const savings =
-    useFinanceStore((s) => s.savings) || [];
+  const addSavingsGoal = useFinanceStore((s) => s.addSavingsGoal);
+  const deleteSavingsGoal = useFinanceStore((s) => s.deleteSavingsGoal);
 
-  const addTransaction = useFinanceStore(
-    (s) => s.addTransaction
-  );
-
-  const deleteTransaction = useFinanceStore(
-    (s) => s.deleteTransaction
-  );
-
-  const addSavingsGoal = useFinanceStore(
-    (s) => s.addSavingsGoal
-  );
-
-  const deleteSavingsGoal = useFinanceStore(
-    (s) => s.deleteSavingsGoal
-  );
-
-  const addFundsToGoal = useFinanceStore(
-    (s) => s.addFundsToGoal
-  );
-
+  const addFundsToGoal = useFinanceStore((s) => s.addFundsToGoal);
   const updateGoalMonthly = useFinanceStore(
     (s) => s.updateGoalMonthly
   );
 
   const [amount, setAmount] = useState('');
+  const [type, setType] = useState<'income' | 'expense'>(
+    'expense'
+  );
 
-  const [type, setType] = useState<
-    'income' | 'expense'
-  >('expense');
-
-  const [category, setCategory] =
-    useState('food');
+  const [category, setCategory] = useState('food');
 
   const [goal, setGoal] = useState('');
-
   const [target, setTarget] = useState('');
 
-  const [goalFunds, setGoalFunds] =
-    useState<Record<number, string>>({});
+  const [goalFunds, setGoalFunds] = useState<
+    Record<number, string>
+  >({});
 
-  const [goalMonthly, setGoalMonthly] =
-    useState<Record<number, string>>({});
+  const [goalMonthly, setGoalMonthly] = useState<
+    Record<number, string>
+  >({});
 
-  const [fundError, setFundError] =
-    useState<Record<number, string>>({});
+  const [fundError, setFundError] = useState<
+    Record<number, string>
+  >({});
 
   const income = useMemo(
     () =>
@@ -92,9 +69,7 @@ export default function Dashboard() {
   const chartData = transactions.map((t, i) => ({
     index: i,
     amount:
-      t.type === 'income'
-        ? t.amount
-        : -t.amount,
+      t.type === 'income' ? t.amount : -t.amount,
   }));
 
   const totalSavings = savings.reduce(
@@ -122,6 +97,7 @@ export default function Dashboard() {
       name: goal,
       target: parseFloat(target),
       amount: 0,
+      monthlyContribution: 0,
     });
 
     setGoal('');
@@ -168,7 +144,7 @@ export default function Dashboard() {
   };
 
   const calculateMonthsToGoal = (
-    goal: any
+    goal: SavingsGoal
   ) => {
     if (
       !goal.monthlyContribution ||
@@ -333,6 +309,245 @@ export default function Dashboard() {
           className="w-full py-2 rounded-lg bg-gradient-to-r from-purple-600 to-fuchsia-600 text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition"
         >
           Add
+        </button>
+      </div>
+
+      {/* SAVINGS GOALS */}
+      <div className="card p-6 space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold">
+            Savings Goals
+          </h3>
+
+          <p className="text-xs text-white/40">
+            Set a monthly amount to see when
+            you'll reach your goal
+          </p>
+        </div>
+
+        <div className="space-y-3 max-h-96 overflow-y-auto">
+          {savings.length > 0 ? (
+            savings.map((s) => {
+              const monthsRemaining =
+                calculateMonthsToGoal(s);
+
+              return (
+                <div
+                  key={s.id}
+                  className="p-3 rounded-lg bg-white/5 border border-white/10 group hover:bg-white/10 transition"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="text-xs text-white/60">
+                      {s.name}
+                    </p>
+
+                    <button
+                      onClick={() =>
+                        deleteSavingsGoal(s.id)
+                      }
+                      className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <p className="text-sm font-semibold">
+                    €{s.amount.toFixed(2)} / €
+                    {s.target.toFixed(2)}
+                  </p>
+
+                  <div className="mt-2 w-full bg-white/10 rounded-full h-1.5">
+                    <div
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(
+                          (s.amount / s.target) *
+                            100,
+                          100
+                        )}%`,
+                      }}
+                    />
+                  </div>
+
+                  {monthsRemaining !== null && (
+                    <p className="text-xs text-white/50 mt-2">
+                      {monthsRemaining === 0
+                        ? '✓ Goal achieved!'
+                        : `${monthsRemaining} month${
+                            monthsRemaining !== 1
+                              ? 's'
+                              : ''
+                          } remaining`}
+                    </p>
+                  )}
+
+                  <div className="mt-3 space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="Add funds"
+                        value={
+                          goalFunds[s.id] || ''
+                        }
+                        onChange={(e) => {
+                          setGoalFunds({
+                            ...goalFunds,
+                            [s.id]:
+                              e.target.value,
+                          });
+
+                          setFundError({
+                            ...fundError,
+                            [s.id]: '',
+                          });
+                        }}
+                        className="flex-1 px-2 py-1 rounded text-xs bg-white/5 border border-white/10 text-white placeholder-white/30"
+                      />
+
+                      <button
+                        onClick={() =>
+                          handleAddFundsToGoal(
+                            s.id,
+                            goalFunds[s.id]
+                          )
+                        }
+                        className="px-2 py-1 rounded text-xs bg-purple-600/50 hover:bg-purple-600 text-white transition"
+                      >
+                        Add
+                      </button>
+                    </div>
+
+                    {fundError[s.id] && (
+                      <p className="text-xs text-red-400">
+                        {fundError[s.id]}
+                      </p>
+                    )}
+
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="Monthly amount"
+                        value={
+                          goalMonthly[s.id] || ''
+                        }
+                        onChange={(e) => {
+                          setGoalMonthly({
+                            ...goalMonthly,
+                            [s.id]:
+                              e.target.value,
+                          });
+
+                          updateGoalMonthly(
+                            s.id,
+                            e.target.value
+                          );
+                        }}
+                        className="flex-1 px-2 py-1 rounded text-xs bg-white/5 border border-white/10 text-white placeholder-white/30"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p className="text-xs text-white/40">
+              No savings goals yet
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* RECENT TRANSACTIONS */}
+      <div className="lg:col-span-2 card p-6 space-y-4">
+        <h3 className="text-sm font-semibold">
+          Recent Transactions
+        </h3>
+
+        <div className="space-y-2 max-h-64 overflow-y-auto">
+          {transactions.length > 0 ? (
+            transactions
+              .slice(0, 10)
+              .map((t) => (
+                <div
+                  key={t.id}
+                  className="flex justify-between items-center p-3 rounded-lg bg-white/5 border border-white/10 group hover:bg-white/10 transition"
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      {t.description ||
+                        t.category}
+                    </p>
+
+                    <p className="text-xs text-white/60">
+                      {new Date(
+                        t.date || Date.now()
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={`text-sm font-semibold ${
+                        t.type === 'income'
+                          ? 'text-green-400'
+                          : 'text-red-400'
+                      }`}
+                    >
+                      {t.type === 'income'
+                        ? '+'
+                        : '-'}
+                      €{t.amount.toFixed(2)}
+                    </p>
+
+                    <button
+                      onClick={() =>
+                        deleteTransaction(t.id)
+                      }
+                      className="opacity-0 group-hover:opacity-100 p-1 text-white/40 hover:text-red-400 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))
+          ) : (
+            <p className="text-xs text-white/40">
+              No transactions yet
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* NEW SAVINGS GOAL */}
+      <div className="card-elevated p-5 space-y-4">
+        <h2 className="text-sm font-semibold">
+          New Goal
+        </h2>
+
+        <input
+          placeholder="Goal name"
+          value={goal}
+          onChange={(e) =>
+            setGoal(e.target.value)
+          }
+          className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm"
+        />
+
+        <input
+          type="number"
+          placeholder="Target amount"
+          value={target}
+          onChange={(e) =>
+            setTarget(e.target.value)
+          }
+          className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm"
+        />
+
+        <button
+          onClick={handleAddSavingsGoal}
+          className="w-full py-2 rounded-lg bg-gradient-to-r from-purple-600 to-fuchsia-600 text-sm font-semibold"
+        >
+          Create Goal
         </button>
       </div>
     </div>
