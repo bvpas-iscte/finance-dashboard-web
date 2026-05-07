@@ -3,17 +3,22 @@ import { ThemeContext } from './context/ThemeContext';
 import Dashboard from './pages/Dashboard';
 
 export default function App() {
-  const { isDark, toggleTheme } = useContext(ThemeContext);
+  const theme = useContext(ThemeContext);
+
+  if (!theme) {
+    throw new Error('ThemeContext not found');
+  }
+
+  const { isDark, toggleTheme } = theme;
 
   return (
     <div className="max-w-7xl mx-auto px-6 pt-6 space-y-8">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2 flex-1">
-          <h1 className={`text-4xl md:text-5xl font-bold bg-gradient-to-r ${
-            isDark 
-              ? 'from-purple-200 to-white' 
+          <h1 className={`text-4xl md:text-5xl font-bold bg-gradient-to-r ${isDark
+              ? 'from-purple-200 to-white'
               : 'from-purple-950 to-black'
-          } bg-clip-text text-transparent leading-tight`}>
+            } bg-clip-text text-transparent leading-tight`}>
             Manage Your Money
           </h1>
           <p className={`text-lg ${isDark ? 'text-white/90' : 'text-white/90'}`}>
@@ -22,11 +27,10 @@ export default function App() {
         </div>
         <button
           onClick={toggleTheme}
-          className={`p-3 rounded-lg transition-all flex-shrink-0 ${
-            isDark 
-              ? 'bg-white/10 hover:bg-white/20 text-purple-400' 
+          className={`p-3 rounded-lg transition-all flex-shrink-0 ${isDark
+              ? 'bg-white/10 hover:bg-white/20 text-purple-400'
               : 'bg-purple-200 hover:bg-purple-300 text-purple-900'
-          }`}
+            }`}
           aria-label="Toggle theme"
         >
           {isDark ? (
