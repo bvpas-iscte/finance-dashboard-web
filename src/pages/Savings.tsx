@@ -24,7 +24,9 @@ export default function Savings() {
   );
 
   const savings = income - expenses;
-  const progress = target ? (savings / target) * 100 : 0;
+  const progress = target
+  ? (savings / Number(target)) * 100
+  : 0;
 
   return (
     <div className="card-elevated p-5 space-y-4">
